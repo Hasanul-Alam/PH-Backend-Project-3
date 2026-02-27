@@ -5,14 +5,30 @@ import type {
   Student,
   StudentName,
 } from "./student.interface.js";
+import validator from "validator";
 
 /* ------------------ Name Schema ------------------ */
 const studentNameSchema = new Schema<StudentName>(
   {
     firstName: {
       type: String,
-      required: true,
+      required: [
+        true,
+        "First name is required. Please provide the student's first name.",
+      ],
       trim: true,
+      maxLength: [
+        20,
+        "First name cannot exceed 20 characters. Please shorten the name.",
+      ],
+      validate: {
+        validator: function (value: string) {
+          const correctFormat =
+            value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+          return value === correctFormat;
+        },
+        message: "{VALUE} is not in capitalized format.",
+      },
     },
     middleName: {
       type: String,
@@ -20,23 +36,72 @@ const studentNameSchema = new Schema<StudentName>(
     },
     lastName: {
       type: String,
-      required: true,
+      required: [
+        true,
+        "Last name is required. Please provide the student's last name.",
+      ],
       trim: true,
+      validate: {
+        validator: (value: string) => validator.isAlpha(value),
+        message: "{VALUE} is not a valid type of data.",
+      },
     },
   },
-  { _id: false }, // prevents creating separate _id for subdocument
+  { _id: false },
 );
 
 /* ------------------ Guardian Schema ------------------ */
 const guardianSchema = new Schema<Guardian>(
   {
-    fatherName: { type: String, required: true },
-    fatherContactNo: { type: String, required: true },
-    fatherOccupation: { type: String, required: true },
-    motherName: { type: String, required: true },
-    motherContactNo: { type: String, required: true },
-    motherOccupation: { type: String, required: true },
-    address: { type: String, required: true },
+    fatherName: {
+      type: String,
+      required: [
+        true,
+        "Father's full name is required. Please enter the father's name.",
+      ],
+    },
+    fatherContactNo: {
+      type: String,
+      required: [
+        true,
+        "Father's contact number is required. Please provide a valid phone number for the father.",
+      ],
+    },
+    fatherOccupation: {
+      type: String,
+      required: [
+        true,
+        "Father's occupation is required. Please specify what the father does for a living.",
+      ],
+    },
+    motherName: {
+      type: String,
+      required: [
+        true,
+        "Mother's full name is required. Please enter the mother's name.",
+      ],
+    },
+    motherContactNo: {
+      type: String,
+      required: [
+        true,
+        "Mother's contact number is required. Please provide a valid phone number for the mother.",
+      ],
+    },
+    motherOccupation: {
+      type: String,
+      required: [
+        true,
+        "Mother's occupation is required. Please specify what the mother does for a living.",
+      ],
+    },
+    address: {
+      type: String,
+      required: [
+        true,
+        "Guardian's home address is required. Please provide their full residential address.",
+      ],
+    },
   },
   { _id: false },
 );
@@ -44,10 +109,34 @@ const guardianSchema = new Schema<Guardian>(
 /* ------------------ Local Guardian Schema ------------------ */
 const localGuardianSchema = new Schema<LocalGuardian>(
   {
-    name: { type: String, required: true },
-    contactNo: { type: String, required: true },
-    occupation: { type: String, required: true },
-    address: { type: String, required: true },
+    name: {
+      type: String,
+      required: [
+        true,
+        "Local guardian's full name is required. Please provide the name of the local guardian.",
+      ],
+    },
+    contactNo: {
+      type: String,
+      required: [
+        true,
+        "Local guardian's contact number is required. Please provide a reachable phone number.",
+      ],
+    },
+    occupation: {
+      type: String,
+      required: [
+        true,
+        "Local guardian's occupation is required. Please specify their profession or job.",
+      ],
+    },
+    address: {
+      type: String,
+      required: [
+        true,
+        "Local guardian's address is required. Please provide their full residential address.",
+      ],
+    },
   },
   { _id: false },
 );
@@ -57,67 +146,112 @@ const studentSchema = new Schema<Student>(
   {
     id: {
       type: String,
-      required: true,
+      required: [
+        true,
+        "Student ID is required. Each student must have a unique identifier.",
+      ],
       unique: true,
     },
 
     name: {
       type: studentNameSchema,
-      required: true,
+      required: [
+        true,
+        "Student's name is required. Please provide at least a first and last name.",
+      ],
     },
 
     gender: {
       type: String,
-      enum: ["male", "female", "other"],
-      required: true,
+      enum: {
+        values: ["male", "female", "other"],
+        message:
+          "'{VALUE}' is not a valid gender. Accepted values are: male, female, or other.",
+      },
+      required: [
+        true,
+        "Gender is required. Please select the student's gender.",
+      ],
     },
 
     email: {
       type: String,
-      required: true,
+      required: [
+        true,
+        "Email address is required. Please provide the student's email for communication.",
+      ],
       unique: true,
       lowercase: true,
       trim: true,
+      validate: {
+        validator: (value: string) => validator.isEmail(value),
+        message: "{VALUE} is not a valid email address.",
+      },
     },
 
     dateOfBirth: {
       type: String,
-      required: true,
+      required: [
+        true,
+        "Date of birth is required. Please enter the student's date of birth (e.g. YYYY-MM-DD).",
+      ],
     },
 
     contactNo: {
       type: String,
-      required: true,
+      required: [
+        true,
+        "Student's contact number is required. Please provide a valid phone number.",
+      ],
     },
 
     emergencyContactNo: {
       type: String,
-      required: true,
+      required: [
+        true,
+        "An emergency contact number is required. Please provide a phone number to reach in case of emergencies.",
+      ],
     },
 
     bloodGroup: {
       type: String,
-      enum: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
+      enum: {
+        values: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
+        message:
+          "'{VALUE}' is not a valid blood group. Accepted values are: A+, A-, B+, B-, AB+, AB-, O+, O-.",
+      },
     },
 
     presentAddress: {
       type: String,
-      required: true,
+      required: [
+        true,
+        "Present address is required. Please provide the student's current living address.",
+      ],
     },
 
     permanentAddress: {
       type: String,
-      required: true,
+      required: [
+        true,
+        "Permanent address is required. Please provide the student's long-term home address.",
+      ],
     },
 
     guardian: {
       type: guardianSchema,
-      required: true,
+      required: [
+        true,
+        "Guardian information is required. Please provide details for at least one parent or legal guardian.",
+      ],
     },
 
     localGuardian: {
       type: localGuardianSchema,
-      required: true,
+      required: [
+        true,
+        "Local guardian information is required. Please provide contact details for someone locally responsible for the student.",
+      ],
     },
 
     profileImage: {
@@ -126,7 +260,11 @@ const studentSchema = new Schema<Student>(
 
     isActive: {
       type: String,
-      enum: ["active", "block"],
+      enum: {
+        values: ["active", "block"],
+        message:
+          "'{VALUE}' is not a valid status. Account status must be either 'active' or 'block'.",
+      },
       default: "active",
     },
   },
