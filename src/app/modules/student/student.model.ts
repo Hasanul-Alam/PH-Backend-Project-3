@@ -6,6 +6,8 @@ import type {
   StudentName,
 } from "./student.interface.js";
 import validator from "validator";
+import config from "../../config/index.js";
+import bcrypt from "bcrypt";
 
 /* ------------------ Name Schema ------------------ */
 const studentNameSchema = new Schema<StudentName>(
@@ -153,6 +155,18 @@ const studentSchema = new Schema<Student>(
       unique: true,
     },
 
+    password: {
+      type: String,
+      required: [
+        true,
+        "Password is required. Please provide a secure password for the student.",
+      ],
+      maxLength: [
+        30,
+        "Password cannot exceed 30 characters. Please shorten the password.",
+      ],
+    },
+
     name: {
       type: studentNameSchema,
       required: [
@@ -272,5 +286,14 @@ const studentSchema = new Schema<Student>(
     timestamps: true,
   },
 );
+
+studentSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+
+  this.password = await bcrypt.hash(
+    this.password,
+    Number(config.bcrypt_salt_rounds) || 12,
+  );
+});
 
 export const StudentModel = model<Student>("Student", studentSchema);

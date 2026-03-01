@@ -1,38 +1,78 @@
 import type { Request, Response } from "express";
 import { StudentServices } from "./student.service.js";
 import Joi from "joi";
-import { studentValidationSchema } from "./student.validation.js";
+import { studentValidationSchema } from "./student.zod.validation.js";
+import type { StudentInput } from "./student.zod.validation.js";
+// import type { StudentInput } from "./student.zod.validation";
+// import { studentValidationSchema } from "./student.validation.js";
+
+// const createStudent = async (req: Request, res: Response) => {
+//   try {
+//     const { student: studentData } = req.body;
+
+//     // validattion using Joi
+//     // const { error, value } = studentValidationSchema.validate(studentData, {
+//     //   abortEarly: false,
+//     // });
+
+//     // Validation using Zod
+//     const zodParsedData = studentValidationSchema.safeParse(studentData);
+
+//     // Handle validation errors when using joi
+
+//     // if (error) {
+//     //   return res.status(400).json({
+//     //     success: false,
+//     //     message: "Validation failed",
+//     //     errors: error.details,
+//     //   });
+//     // }
+
+//     // 2️⃣ Use validated value (not raw data)
+//     const result = await StudentServices.createStudentIntoDB(zodParsedData.data);
+
+//     // 3️⃣ Send response
+//     return res.status(201).json({
+//       success: true,
+//       message: "Student created successfully",
+//       data: result,
+//     });
+//   } catch (error) {
+//     return res.status(500).json({
+//       success: false,
+//       message: "Failed to create student",
+//       error,
+//     });
+//   }
+// };
 
 const createStudent = async (req: Request, res: Response) => {
   try {
     const { student: studentData } = req.body;
 
-    // 1️⃣ Validate first
-    const { error, value } = studentValidationSchema.validate(studentData, {
-      abortEarly: false,
-    });
+    const parsedData = studentValidationSchema.safeParse(studentData);
 
-    if (error) {
+    if (!parsedData.success) {
       return res.status(400).json({
         success: false,
         message: "Validation failed",
-        errors: error.details,
+        errors: parsedData.error.flatten(),
       });
     }
 
-    // 2️⃣ Use validated value (not raw data)
-    const result = await StudentServices.createStudentIntoDB(value);
+    // ✅ TypeScript already knows this is StudentInput
+    // @ts-ignore
+    const result = await StudentServices.createStudentIntoDB(parsedData.data);
 
-    // 3️⃣ Send response
     return res.status(201).json({
       success: true,
       message: "Student created successfully",
       data: result,
     });
-  } catch (error) {
+  } catch (error: any) {
     return res.status(500).json({
       success: false,
-      message: "Failed to create student",
+      message: error.message || "Failed to create student",
       error,
     });
   }
