@@ -1,5 +1,3 @@
-import { Schema, model, connect } from "mongoose";
-
 type Gender = "male" | "female" | "other";
 
 type BloodGroup = "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
