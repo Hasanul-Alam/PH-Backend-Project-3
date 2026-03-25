@@ -1,3 +1,5 @@
+import type { Types } from "mongoose";
+
 type Gender = "male" | "female" | "other";
 
 type BloodGroup = "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
@@ -27,6 +29,7 @@ export type LocalGuardian = {
 
 export type Student = {
   id: string;
+  user: Types.ObjectId;
   password: string;
   name: StudentName;
   gender: Gender;
@@ -40,5 +43,5 @@ export type Student = {
   guardian: Guardian;
   localGuardian: LocalGuardian;
   profileImage?: string;
-  isActive: "active" | "block";
+  // isActive: "active" | "block";
 };

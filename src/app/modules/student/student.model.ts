@@ -6,8 +6,6 @@ import type {
   StudentName,
 } from "./student.interface.js";
 import validator from "validator";
-import config from "../../config/index.js";
-import bcrypt from "bcrypt";
 
 /* ------------------ Name Schema ------------------ */
 const studentNameSchema = new Schema<StudentName>(
@@ -155,17 +153,24 @@ const studentSchema = new Schema<Student>(
       unique: true,
     },
 
-    password: {
-      type: String,
-      required: [
-        true,
-        "Password is required. Please provide a secure password for the student.",
-      ],
-      maxLength: [
-        30,
-        "Password cannot exceed 30 characters. Please shorten the password.",
-      ],
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: [true, "User ID is required. Please provide a valid user ID."],
+      unique: true,
     },
+
+    // password: {
+    //   type: String,
+    //   required: [
+    //     true,
+    //     "Password is required. Please provide a secure password for the student.",
+    //   ],
+    //   maxLength: [
+    //     30,
+    //     "Password cannot exceed 30 characters. Please shorten the password.",
+    //   ],
+    // },
 
     name: {
       type: studentNameSchema,
@@ -271,29 +276,10 @@ const studentSchema = new Schema<Student>(
     profileImage: {
       type: String,
     },
-
-    isActive: {
-      type: String,
-      enum: {
-        values: ["active", "block"],
-        message:
-          "'{VALUE}' is not a valid status. Account status must be either 'active' or 'block'.",
-      },
-      default: "active",
-    },
   },
   {
     timestamps: true,
   },
 );
-
-studentSchema.pre("save", async function () {
-  if (!this.isModified("password")) return;
-
-  this.password = await bcrypt.hash(
-    this.password,
-    Number(config.bcrypt_salt_rounds) || 12,
-  );
-});
 
 export const StudentModel = model<Student>("Student", studentSchema);

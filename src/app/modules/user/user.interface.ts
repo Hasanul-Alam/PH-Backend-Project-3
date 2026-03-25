@@ -6,3 +6,9 @@ export type TUser = {
   isDeleted: boolean;
   status: "in-progress" | "blocked";
 };
+
+export type TNewUser = {
+  password: string;
+  role: string;
+  id: string;
+};

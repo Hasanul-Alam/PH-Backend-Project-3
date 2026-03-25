@@ -1,8 +1,11 @@
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { StudentServices } from "./student.service.js";
 import Joi from "joi";
 import { studentValidationSchema } from "./student.zod.validation.js";
 import type { StudentInput } from "./student.zod.validation.js";
+import sendResponse from "../../utils/sendResponse.js";
+import httpStatus from "http-status";
+
 // import type { StudentInput } from "./student.zod.validation";
 // import { studentValidationSchema } from "./student.validation.js";
 
@@ -46,33 +49,40 @@ import type { StudentInput } from "./student.zod.validation.js";
 //   }
 // };
 
-const getAllStudents = async (req: Request, res: Response) => {
+const getAllStudents = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const result = await StudentServices.getAllStudentsFromDB();
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
       message: "Students retrieved successfully",
       data: result,
     });
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
 const getSingleStudent = async (
   req: Request<{ id: string }>,
   res: Response,
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
     const result = await StudentServices.getSingleStudentFromDB(id);
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
       message: "Student retrieved successfully",
       data: result,
     });
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
