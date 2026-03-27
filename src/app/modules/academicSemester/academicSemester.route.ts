@@ -19,4 +19,13 @@ router.get("/", AcademicSemesterControllers.getAllAcademicSemesters);
 // Get single academic semester
 router.get("/:id", AcademicSemesterControllers.getSingleAcademicSemester);
 
+// Update academic semester
+router.patch(
+  "/:id",
+  validateRequest(
+    AcademicSemesterValidation.createAcdemicSemesterValidationSchema,
+  ),
+  AcademicSemesterControllers.updateAcademicSemester,
+);
+
 export const AcademicSemesterRoutes = router;
