@@ -22,11 +22,9 @@ const studentNameSchema = new Schema<StudentName>(
         "First name cannot exceed 20 characters. Please shorten the name.",
       ],
       validate: {
-        validator: function (value: string) {
-          const correctFormat =
-            value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
-          return value === correctFormat;
-        },
+        validator: (value: string) =>
+          value ===
+          value.charAt(0).toUpperCase() + value.slice(1).toLowerCase(),
         message: "{VALUE} is not in capitalized format.",
       },
     },
@@ -60,18 +58,18 @@ const guardianSchema = new Schema<Guardian>(
         "Father's full name is required. Please enter the father's name.",
       ],
     },
-    fatherContactNo: {
-      type: String,
-      required: [
-        true,
-        "Father's contact number is required. Please provide a valid phone number for the father.",
-      ],
-    },
     fatherOccupation: {
       type: String,
       required: [
         true,
         "Father's occupation is required. Please specify what the father does for a living.",
+      ],
+    },
+    fatherContactNo: {
+      type: String,
+      required: [
+        true,
+        "Father's contact number is required. Please provide a valid phone number for the father.",
       ],
     },
     motherName: {
@@ -81,13 +79,6 @@ const guardianSchema = new Schema<Guardian>(
         "Mother's full name is required. Please enter the mother's name.",
       ],
     },
-    motherContactNo: {
-      type: String,
-      required: [
-        true,
-        "Mother's contact number is required. Please provide a valid phone number for the mother.",
-      ],
-    },
     motherOccupation: {
       type: String,
       required: [
@@ -95,11 +86,11 @@ const guardianSchema = new Schema<Guardian>(
         "Mother's occupation is required. Please specify what the mother does for a living.",
       ],
     },
-    address: {
+    motherContactNo: {
       type: String,
       required: [
         true,
-        "Guardian's home address is required. Please provide their full residential address.",
+        "Mother's contact number is required. Please provide a valid phone number for the mother.",
       ],
     },
   },
@@ -116,18 +107,18 @@ const localGuardianSchema = new Schema<LocalGuardian>(
         "Local guardian's full name is required. Please provide the name of the local guardian.",
       ],
     },
-    contactNo: {
-      type: String,
-      required: [
-        true,
-        "Local guardian's contact number is required. Please provide a reachable phone number.",
-      ],
-    },
     occupation: {
       type: String,
       required: [
         true,
         "Local guardian's occupation is required. Please specify their profession or job.",
+      ],
+    },
+    contactNo: {
+      type: String,
+      required: [
+        true,
+        "Local guardian's contact number is required. Please provide a reachable phone number.",
       ],
     },
     address: {
@@ -167,8 +158,8 @@ const studentSchema = new Schema<Student>(
     //     "Password is required. Please provide a secure password for the student.",
     //   ],
     //   maxLength: [
-    //     30,
-    //     "Password cannot exceed 30 characters. Please shorten the password.",
+    //     20,
+    //     "Password cannot exceed 20 characters. Please shorten the password.",
     //   ],
     // },
 
@@ -193,6 +184,10 @@ const studentSchema = new Schema<Student>(
       ],
     },
 
+    dateOfBirth: {
+      type: String,
+    },
+
     email: {
       type: String,
       required: [
@@ -206,14 +201,6 @@ const studentSchema = new Schema<Student>(
         validator: (value: string) => validator.isEmail(value),
         message: "{VALUE} is not a valid email address.",
       },
-    },
-
-    dateOfBirth: {
-      type: String,
-      required: [
-        true,
-        "Date of birth is required. Please enter the student's date of birth (e.g. YYYY-MM-DD).",
-      ],
     },
 
     contactNo: {
@@ -273,7 +260,16 @@ const studentSchema = new Schema<Student>(
       ],
     },
 
-    profileImage: {
+    admissionSemester: {
+      type: Schema.Types.ObjectId,
+      ref: "AcademicSemester",
+      required: [
+        true,
+        "Admission semester is required. Please provide a valid semester ID.",
+      ],
+    },
+
+    profileImg: {
       type: String,
     },
   },

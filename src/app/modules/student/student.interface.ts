@@ -12,29 +12,28 @@ export type StudentName = {
 
 export type Guardian = {
   fatherName: string;
-  fatherContactNo: string;
   fatherOccupation: string;
+  fatherContactNo: string;
   motherName: string;
-  motherContactNo: string;
   motherOccupation: string;
-  address: string;
+  motherContactNo: string;
 };
 
 export type LocalGuardian = {
   name: string;
-  contactNo: string;
   occupation: string;
+  contactNo: string;
   address: string;
 };
 
 export type Student = {
   id: string;
   user: Types.ObjectId;
-  password: string;
+  // password: string;
   name: StudentName;
   gender: Gender;
+  dateOfBirth?: string;
   email: string;
-  dateOfBirth: string;
   contactNo: string;
   emergencyContactNo: string;
   bloodGroup?: BloodGroup;
@@ -42,6 +41,6 @@ export type Student = {
   permanentAddress: string;
   guardian: Guardian;
   localGuardian: LocalGuardian;
-  profileImage?: string;
-  // isActive: "active" | "block";
+  admissionSemester: Types.ObjectId;
+  profileImg?: string;
 };
