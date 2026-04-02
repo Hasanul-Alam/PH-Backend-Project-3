@@ -7,7 +7,17 @@ const createAcademicFacultyValidationSchema = z.object({
     }),
   }),
 });
+const updateAcademicFacultyValidationSchema = z.object({
+  body: z.object({
+    name: z
+      .string({
+        error: "Academic Faculty name is required",
+      })
+      .optional(),
+  }),
+});
 
 export const AcademicFacultyValidation = {
   createAcademicFacultyValidationSchema,
+  updateAcademicFacultyValidationSchema,
 };
